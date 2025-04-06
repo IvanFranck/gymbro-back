@@ -5,6 +5,7 @@ import * as Joi from 'joi';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaService } from './prisma.service';
 import { CustomerModule } from './customer/customer.module';
+import { MembershipModule } from './membership/membership.module';
 
 @Module({
   imports: [
@@ -18,6 +19,8 @@ import { CustomerModule } from './customer/customer.module';
     }),
 
     CustomerModule,
+
+    MembershipModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
