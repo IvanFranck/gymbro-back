@@ -6,6 +6,7 @@ import * as Joi from 'joi';
 import * as path from 'path';
 import { ConfigModule } from '@nestjs/config';
 import { PrismaService } from './prisma.service';
+import { CustomerModule } from './customer/customer.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { PrismaService } from './prisma.service';
         AcceptLanguageResolver,
       ],
     }),
+    CustomerModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
