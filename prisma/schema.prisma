@@ -15,7 +15,7 @@ model Client {
   id                Int       @id @default(autoincrement())
   nom               String
   prenom            String
-  telephone         String?
+  telephone         String    @unique
   adresse           String?
   dateInscription   DateTime  @default(now()) @map("date_inscription")
   derniereConnexion DateTime? @map("derniere_connexion")
