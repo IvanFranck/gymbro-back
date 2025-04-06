@@ -316,30 +316,14 @@ export class PaymentMethodService {
     // Méthodes de paiement par défaut
     const defaultMethodes = [
       {
-        nom: 'Carte bancaire',
-        description: 'Paiement par carte bancaire (Visa, Mastercard, etc.)',
-        actif: true,
-      },
-      {
-        nom: 'Virement bancaire',
+        nom: 'Mobile monnaie',
         description:
-          "Paiement par virement bancaire sur le compte de l'entreprise",
+          'Paiement par carte mobile money (MTN Mobile money ou Orange Mobile money)',
         actif: true,
       },
       {
         nom: 'Espèces',
         description: "Paiement en espèces à l'accueil",
-        actif: true,
-      },
-      {
-        nom: 'Chèque',
-        description: "Paiement par chèque à l'ordre de l'entreprise",
-        actif: true,
-      },
-      {
-        nom: 'Prélèvement automatique',
-        description:
-          'Paiement par prélèvement automatique mensuel sur le compte bancaire',
         actif: true,
       },
     ];
