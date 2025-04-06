@@ -1,8 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// This is your Prisma schema file for a subscription management system
+// Learn more about Prisma here: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -13,10 +10,156 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Test {
-  id        String   @id @default(uuid())
-  name      String
-  address   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// Represents a client/user in the system
+model Client {
+  id                Int       @id @default(autoincrement())
+  nom               String
+  prenom            String
+  telephone         String?
+  adresse           String?
+  dateInscription   DateTime  @default(now()) @map("date_inscription")
+  derniereConnexion DateTime? @map("derniere_connexion")
+
+  // Relations
+  statutId      Int             @map("id_statut")
+  statut        Statut          @relation(fields: [statutId], references: [id])
+  abonnements   Abonnement[]
+  servicesAcces ClientService[]
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("clients")
 }
+
+// Represents a subscription linked to a client
+model Abonnement {
+  id             Int       @id @default(autoincrement())
+  dateDebut      DateTime  @map("date_debut")
+  dateExpiration DateTime  @map("date_expiration")
+  montantPaye    Float     @map("montant_paye")
+  datePaiement   DateTime? @map("date_paiement")
+
+  // Relations
+  clientId Int    @map("id_client")
+  client   Client @relation(fields: [clientId], references: [id])
+
+  typeAbonnementId Int            @map("id_type_abonnement")
+  typeAbonnement   TypeAbonnement @relation(fields: [typeAbonnementId], references: [id])
+
+  statutId Int    @map("id_statut")
+  statut   Statut @relation(fields: [statutId], references: [id])
+
+  methodePaiementId Int?             @map("id_methode_paiement")
+  methodePaiement   MethodePaiement? @relation(fields: [methodePaiementId], references: [id])
+
+  servicesAcces ClientService[]
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("abonnements")
+}
+
+// Represents different subscription types/plans available
+model TypeAbonnement {
+  id          Int     @id @default(autoincrement())
+  nom         String
+  niveau      String? // e.g., "Basic", "Premium", "Standard"
+  dureeJours  Int     @map("duree_jours")
+  prix        Float
+  description String?
+  actif       Boolean @default(true)
+
+  // Relations
+  abonnements Abonnement[]
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("types_abonnement")
+}
+
+// Represents different payment methods
+model MethodePaiement {
+  id          Int     @id @default(autoincrement())
+  nom         String // e.g., "Carte de crédit", "Espèces", "Virement"
+  description String?
+  actif       Boolean @default(true)
+
+  // Relations
+  abonnements Abonnement[]
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("methodes_paiement")
+}
+
+// Represents different status values that can be assigned to clients or subscriptions
+model Statut {
+  id          Int     @id @default(autoincrement())
+  nom         String // e.g., "Actif", "En attente", "Expiré"
+  typeEntite  String  @map("type_entite") // e.g., "Client", "Abonnement"
+  description String?
+  couleur     String? // For UI display purposes
+
+  // Relations
+  clients     Client[]
+  abonnements Abonnement[]
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("statuts")
+}
+
+// Represents services offered (like yoga classes, gym access, etc.)
+model Service {
+  id            Int     @id @default(autoincrement())
+  nom           String
+  description   String?
+  dureeStandard Int?    @map("duree_standard") // In minutes
+  capaciteMax   Int?    @map("capacite_max")
+  actif         Boolean @default(true)
+
+  // Relations
+  clientsAcces ClientService[]
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("services")
+}
+
+// Junction table for many-to-many relationship between clients and services
+model ClientService {
+  id             Int       @id @default(autoincrement())
+  dateDebutAcces DateTime  @map("date_debut_acces")
+  dateFinAcces   DateTime? @map("date_fin_acces")
+
+  // Relations
+  clientId Int    @map("id_client")
+  client   Client @relation(fields: [clientId], references: [id])
+
+  serviceId Int     @map("id_service")
+  service   Service @relation(fields: [serviceId], references: [id])
+
+  abonnementId Int?        @map("id_abonnement")
+  abonnement   Abonnement? @relation(fields: [abonnementId], references: [id])
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("client_services")
+}
+
+// For statistics tables, we could add these models later as needed
+// StatsQuotidiennes, StatsAgregeesTemporelles, etc.
