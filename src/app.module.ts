@@ -8,6 +8,7 @@ import { CustomerModule } from './customer/customer.module';
 import { MembershipModule } from './membership/membership.module';
 import { MembershipTypeModule } from './membership-type/membership-type.module';
 import { StatusModule } from './status/status.module';
+import { PaymentMethodModule } from './payment-method/payment-method.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { StatusModule } from './status/status.module';
     MembershipModule,
     MembershipTypeModule,
     StatusModule,
+    PaymentMethodModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
