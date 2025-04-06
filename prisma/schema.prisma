@@ -21,8 +21,8 @@ model Client {
   derniereConnexion DateTime? @map("derniere_connexion")
 
   // Relations
-  statutId      Int             @map("id_statut")
-  statut        Statut          @relation(fields: [statutId], references: [id])
+  statutId      Int?            @map("id_statut")
+  statut        Statut?         @relation(fields: [statutId], references: [id])
   abonnements   Abonnement[]
   servicesAcces ClientService[]
 

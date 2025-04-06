@@ -19,8 +19,8 @@ export class CreateClientDto {
   prenom: string;
 
   @IsString()
-  @IsOptional()
-  @ApiPropertyOptional({ description: 'Le numéro de téléphone du client' })
+  @IsNotEmpty()
+  @ApiProperty({ description: 'Le numéro de téléphone du client' })
   telephone: string;
 
   @IsString()
@@ -48,7 +48,7 @@ export class UpdateClientDto {
   @IsString()
   @IsOptional()
   @ApiPropertyOptional({ description: 'Le numéro de téléphone du client' })
-  telephone: string;
+  telephone?: string;
 
   @IsString()
   @IsOptional()
@@ -76,7 +76,7 @@ export class ClientResponseDto {
   @ApiProperty()
   prenom: string;
 
-  @ApiPropertyOptional()
+  @ApiProperty()
   telephone: string;
 
   @ApiPropertyOptional()
