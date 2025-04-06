@@ -19,13 +19,9 @@ import { StatusModule } from './status/status.module';
         PORT: Joi.number().port().default(3000),
       }),
     }),
-
     CustomerModule,
-
     MembershipModule,
-
     MembershipTypeModule,
-
     StatusModule,
   ],
   controllers: [AppController],
