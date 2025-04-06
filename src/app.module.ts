@@ -7,6 +7,7 @@ import { PrismaService } from './prisma.service';
 import { CustomerModule } from './customer/customer.module';
 import { MembershipModule } from './membership/membership.module';
 import { MembershipTypeModule } from './membership-type/membership-type.module';
+import { StatusModule } from './status/status.module';
 
 @Module({
   imports: [
@@ -18,12 +19,10 @@ import { MembershipTypeModule } from './membership-type/membership-type.module';
         PORT: Joi.number().port().default(3000),
       }),
     }),
-
     CustomerModule,
-
     MembershipModule,
-
     MembershipTypeModule,
+    StatusModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
