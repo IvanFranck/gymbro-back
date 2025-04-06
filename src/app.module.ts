@@ -9,6 +9,7 @@ import { MembershipModule } from './membership/membership.module';
 import { MembershipTypeModule } from './membership-type/membership-type.module';
 import { StatusModule } from './status/status.module';
 import { PaymentMethodModule } from './payment-method/payment-method.module';
+import { GymServiceModule } from './gym-service/gym-service.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { PaymentMethodModule } from './payment-method/payment-method.module';
     MembershipTypeModule,
     StatusModule,
     PaymentMethodModule,
+    GymServiceModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
