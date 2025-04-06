@@ -15,14 +15,14 @@ model Client {
   id                Int       @id @default(autoincrement())
   nom               String
   prenom            String
-  telephone         String?
+  telephone         String    @unique
   adresse           String?
   dateInscription   DateTime  @default(now()) @map("date_inscription")
   derniereConnexion DateTime? @map("derniere_connexion")
 
   // Relations
-  statutId      Int             @map("id_statut")
-  statut        Statut          @relation(fields: [statutId], references: [id])
+  statutId      Int?            @map("id_statut")
+  statut        Statut?         @relation(fields: [statutId], references: [id])
   abonnements   Abonnement[]
   servicesAcces ClientService[]
 
