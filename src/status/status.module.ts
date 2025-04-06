@@ -2,9 +2,11 @@ import { Module, OnModuleInit } from '@nestjs/common';
 import { StatusService } from './status.service';
 import { StatusController } from './status.controller';
 import { ModuleRef } from '@nestjs/core';
+import { PrismaService } from 'src/prisma.service';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
-  providers: [StatusService],
+  providers: [StatusService, PrismaService, ConfigService],
   controllers: [StatusController],
 })
 export class StatusModule implements OnModuleInit {
