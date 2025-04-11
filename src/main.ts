@@ -10,6 +10,9 @@ async function bootstrap() {
   const config = app.get(ConfigService);
   const port = config.get('PORT');
 
+  // enable cors
+  app.enableCors()
+
   const documentConfig = new DocumentBuilder()
     .setTitle('Cats example')
     .setDescription('The cats API description')
