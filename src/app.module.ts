@@ -11,6 +11,7 @@ import { StatusModule } from './status/status.module';
 import { PaymentMethodModule } from './payment-method/payment-method.module';
 import { GymServiceModule } from './gym-service/gym-service.module';
 import { CustomerServiceModule } from './customer-service/customer-service.module';
+import { MembershipTypeServiceModule } from './membership-type-service/membership-type-service.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { CustomerServiceModule } from './customer-service/customer-service.modul
     PaymentMethodModule,
     GymServiceModule,
     CustomerServiceModule,
+    MembershipTypeServiceModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
