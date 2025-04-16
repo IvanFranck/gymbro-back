@@ -44,14 +44,12 @@ export class MembershipTypeServiceService {
   }
 
   // Récupérer tous les services inclus dans un type d'abonnement
-  private async getServicesByAbonnementType(typeAbonnementId: number) {
+  async getServicesByAbonnementType(typeAbonnementId: number) {
     try {
-      const relations = await this.prisma.typeAbonnementService.findMany({
+      return await this.prisma.typeAbonnementService.findMany({
         where: { typeAbonnementId },
         include: { service: true },
       });
-
-      return relations.map((relation) => relation.service);
     } catch (error) {
       if (error.code instanceof Prisma.PrismaClientKnownRequestError) {
         throw new Error(error.message);

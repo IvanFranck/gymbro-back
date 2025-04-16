@@ -153,7 +153,7 @@ export class MembershipTypeService {
       orderBy: { nom: 'asc' },
       include: {
         _count: {
-          select: { services: true, abonnements: true },
+          select: { services: true },
         },
       },
     });
