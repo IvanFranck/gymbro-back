@@ -60,9 +60,19 @@ export class MembershipTypeServiceService {
 
   async addServiceToAbonnementTypeBulk(dto: AddServiceToAbonnementTypeBulkDto) {
     try {
+      // Delete all service associations not in the provided list of service IDs
+      await this.prisma.typeAbonnementService.deleteMany({
+        where: {
+          serviceId: {
+            notIn: dto.servicesId,
+          },
+          typeAbonnementId: dto.typeAbonnementId,
+        },
+      });
+      // Create an array of service IDs that are not already associated with the given typeAbonnementId
       const serviceIdArray = await Promise.all(
-        dto.serviceId.map(async (serviceId) => {
-          const membershipTypeService =
+        dto.servicesId.map(async (serviceId) => {
+          const isServiceAssociated =
             await this.prisma.typeAbonnementService.findUnique({
               where: {
                 typeAbonnementId_serviceId: {
@@ -71,11 +81,10 @@ export class MembershipTypeServiceService {
                 },
               },
             });
-          if (!membershipTypeService) {
-            return Number(serviceId);
-          }
+          return isServiceAssociated ? null : Number(serviceId);
         }),
-      );
+      ).then((results) => results.filter((serviceId) => serviceId !== null));
+
       return await Promise.all(
         serviceIdArray.map((serviceId) =>
           this.addServiceToAbonnementType({

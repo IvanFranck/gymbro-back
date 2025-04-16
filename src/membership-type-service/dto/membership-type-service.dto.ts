@@ -8,7 +8,7 @@ export class AddServiceToAbonnementTypeDto {
 
 export class AddServiceToAbonnementTypeBulkDto {
   typeAbonnementId: number;
-  serviceId: number[];
+  servicesId: number[];
 }
 
 export class TypeAbonnementServiceResponseDto {

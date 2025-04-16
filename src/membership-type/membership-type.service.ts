@@ -52,7 +52,7 @@ export class MembershipTypeService {
       // Associate services with the subscription type
       await this.membershipTypeService.addServiceToAbonnementTypeBulk({
         typeAbonnementId: typeAbonnement.id,
-        serviceId: services,
+        servicesId: services,
       });
 
       // Retrieve the updated subscription type with associated services
@@ -152,8 +152,10 @@ export class MembershipTypeService {
       take: limit,
       orderBy: { nom: 'asc' },
       include: {
-        _count: {
-          select: { services: true },
+        services: {
+          include: {
+            service: true,
+          },
         },
       },
     });
@@ -238,7 +240,7 @@ export class MembershipTypeService {
     const { services, ...data } = updateTypeAbonnementDto;
     await this.membershipTypeService.addServiceToAbonnementTypeBulk({
       typeAbonnementId: id,
-      serviceId: services,
+      servicesId: services,
     });
     // Mettre à jour le type d'abonnement
     return await this.prisma.typeAbonnement.update({
