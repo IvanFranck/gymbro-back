@@ -74,8 +74,8 @@ model TypeAbonnement {
   actif       Boolean @default(true)
 
   // Relations
-  abonnements            Abonnement[]
-  TypeAbonnementServices TypeAbonnementService[]
+  abonnements Abonnement[]
+  services    TypeAbonnementService[]
 
   // Timestamps
   createdAt DateTime @default(now()) @map("created_at")

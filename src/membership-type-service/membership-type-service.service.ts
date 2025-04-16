@@ -62,12 +62,30 @@ export class MembershipTypeServiceService {
 
   async addServiceToAbonnementTypeBulk(dto: AddServiceToAbonnementTypeBulkDto) {
     try {
-      return await this.prisma.typeAbonnementService.createMany({
-        data: dto.serviceId.map((serviceId) => ({
-          typeAbonnementId: dto.typeAbonnementId,
-          serviceId: Number(serviceId),
-        })),
-      });
+      const serviceIdArray = await Promise.all(
+        dto.serviceId.map(async (serviceId) => {
+          const membershipTypeService =
+            await this.prisma.typeAbonnementService.findUnique({
+              where: {
+                typeAbonnementId_serviceId: {
+                  typeAbonnementId: dto.typeAbonnementId,
+                  serviceId: Number(serviceId),
+                },
+              },
+            });
+          if (!membershipTypeService) {
+            return Number(serviceId);
+          }
+        }),
+      );
+      return await Promise.all(
+        serviceIdArray.map((serviceId) =>
+          this.addServiceToAbonnementType({
+            typeAbonnementId: dto.typeAbonnementId,
+            serviceId: serviceId,
+          }),
+        ),
+      );
     } catch (error) {
       if (error.code instanceof Prisma.PrismaClientKnownRequestError) {
         throw new Error(error.message);

@@ -8,6 +8,7 @@ import {
   Min,
   MaxLength,
   ValidateIf,
+  IsArray,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
@@ -52,6 +53,19 @@ export class CreateTypeAbonnementDto {
     minimum: 0,
   })
   prix: number;
+
+  @IsArray()
+  @IsOptional()
+  @ValidateIf(
+    (o) =>
+      Array.isArray(o.services) &&
+      o.services.every((id) => typeof id === 'number'),
+  )
+  @ApiPropertyOptional({
+    description: "tableau de services associés au type d'abonnement",
+    example: '[1, 2, 3]',
+  })
+  services?: number[];
 
   @IsString()
   @IsOptional()
@@ -111,6 +125,19 @@ export class UpdateTypeAbonnementDto {
     minimum: 0,
   })
   prix?: number;
+
+  @IsArray()
+  @IsOptional()
+  @ValidateIf(
+    (o) =>
+      Array.isArray(o.services) &&
+      o.services.every((id) => typeof id === 'number'),
+  )
+  @ApiPropertyOptional({
+    description: "tableau de services associés au type d'abonnement",
+    example: '[1, 2, 3]',
+  })
+  services?: number[];
 
   @IsString()
   @IsOptional()
