@@ -1,0 +1,135 @@
+classDiagram
+    class Client {
+        +int id_client
+        +string nom
+        +string prenom
+        +string email
+        +string telephone
+        +string adresse
+        +date date_inscription
+        +int id_statut
+        +datetime derniere_connexion
+    }
+    
+    class Abonnement {
+        +int id_abonnement
+        +int id_client
+        +int id_type_abonnement
+        +date date_debut
+        +date date_expiration
+        +int id_statut
+        +float montant_paye
+        +date date_paiement
+        +int id_methode_paiement
+    }
+    
+    class TypeAbonnement {
+        +int id_type_abonnement
+        +string nom
+        +string description
+        +boolean actif
+    }
+    
+    class MethodePaiement {
+        +int id_methode_paiement
+        +string nom
+        +string description
+        +boolean actif
+    }
+    
+    class Statut {
+        +int id_statut
+        +string nom
+        +string type_entite
+        +string description
+        +string couleur
+    }
+    
+    class Service {
+        +int id_service
+        +string nom
+        +string description
+        +int duree_standard
+        +int capacite_max
+        +boolean actif
+    }
+    
+    class ClientService {
+        +int id_client_service
+        +int id_client
+        +int id_service
+        +date date_debut_acces
+        +date date_fin_acces
+        +int id_abonnement
+    }
+    
+    class TypeAbonnementService {
+        +int id_type_abonnement_service
+        +int id_type_abonnement
+        +int id_service
+    }
+    
+    class TarifAbonnement {
+        +int id_tarif
+        +int id_type_abonnement
+        +string genre
+        +int duree_jours
+        +float prix
+    }
+    
+    class SessionIndividuelle {
+        +int id_session
+        +int id_service
+        +int nombre_sessions
+        +float prix
+    }
+    
+    class StatsQuotidiennes {
+        +int id_stat
+        +date date_stat
+        +string type_stat
+        +decimal valeur
+        +decimal variation_pct
+        +datetime date_maj
+    }
+    
+    class StatsAgregeesTemporelles {
+        +int id_stat
+        +string type_stat
+        +datetime periode_debut
+        +datetime periode_fin
+        +string granularite
+        +decimal valeur
+        +text metadata
+    }
+    
+    class VueMaterialisee {
+        +int id_vue
+        +string nom
+        +string description
+        +string requete_sql
+        +datetime dernier_rafraichissement
+        +string frequence_rafraichissement
+        +boolean rafraichissement_auto
+    }
+    
+    class DonneeVueMaterialisee {
+        +int id_donnee
+        +int id_vue
+        +text contenu_json
+        +datetime date_generation
+    }
+    
+    Client "1" -- "0..*" Abonnement : possède
+    Abonnement "0..*" -- "1" TypeAbonnement : est de type
+    Abonnement "0..*" -- "1" MethodePaiement : payé par
+    Client "1" -- "0..*" ClientService : accède à
+    Service "1" -- "0..*" ClientService : accessible par
+    Abonnement "1" -- "0..*" ClientService : donne accès à
+    Client "0..*" -- "1" Statut : a pour statut
+    Abonnement "0..*" -- "1" Statut : a pour statut
+    TypeAbonnement "1" -- "0..*" TypeAbonnementService : inclut
+    Service "1" -- "0..*" TypeAbonnementService : est inclus dans
+    TypeAbonnement "1" -- "0..*" TarifAbonnement : propose
+    Service "1" -- "0..*" SessionIndividuelle : offre
+    VueMaterialisee "1" -- "0..1" DonneeVueMaterialisee : contient

@@ -71,14 +71,33 @@ model TypeAbonnement {
   actif       Boolean @default(true)
 
   // Relations
-  abonnements Abonnement[]
-  services    TypeAbonnementService[]
+  abonnements     Abonnement[]
+  services        TypeAbonnementService[]
+  tarifAbonnement TarifAbonnement[]
 
   // Timestamps
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("types_abonnement")
+}
+
+model TarifAbonnement {
+  id         Int    @id @default(autoincrement())
+  prix       Float
+  genre      String
+  dureeJours Int    @map("duree_jours")
+
+  // Relations
+  typeAbonnementId Int            @map("id_type_abonnement")
+  typeAbonnement   TypeAbonnement @relation(fields: [typeAbonnementId], references: [id])
+
+  // Timestamps
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([typeAbonnementId, genre, dureeJours])
+  @@map("tarifs_abonnement")
 }
 
 // Represents different payment methods
