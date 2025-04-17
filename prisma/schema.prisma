@@ -54,6 +54,9 @@ model Abonnement {
   methodePaiementId Int?             @map("id_methode_paiement")
   methodePaiement   MethodePaiement? @relation(fields: [methodePaiementId], references: [id])
 
+  tarifAbonnmentId Int             @map("id_tarif_abonnement")
+  tarif            TarifAbonnement @relation(fields: [tarifAbonnmentId], references: [id])
+
   servicesAcces ClientService[]
 
   // Timestamps
@@ -71,9 +74,9 @@ model TypeAbonnement {
   actif       Boolean @default(true)
 
   // Relations
-  abonnements     Abonnement[]
-  services        TypeAbonnementService[]
-  tarifAbonnement TarifAbonnement[]
+  abonnements      Abonnement[]
+  services         TypeAbonnementService[]
+  tarifAbonnements TarifAbonnement[]
 
   // Timestamps
   createdAt DateTime @default(now()) @map("created_at")
@@ -83,10 +86,11 @@ model TypeAbonnement {
 }
 
 model TarifAbonnement {
-  id         Int    @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   prix       Float
   genre      String
-  dureeJours Int    @map("duree_jours")
+  dureeJours Int      @map("duree_jours")
+  actif      Boolean? @default(true)
 
   // Relations
   typeAbonnementId Int            @map("id_type_abonnement")
@@ -95,6 +99,8 @@ model TarifAbonnement {
   // Timestamps
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+
+  abonnements Abonnement[]
 
   @@unique([typeAbonnementId, genre, dureeJours])
   @@map("tarifs_abonnement")
@@ -147,7 +153,7 @@ model Service {
 
   // Relations
   clientsAcces           ClientService[]
-  TypeAbonnementServices TypeAbonnementService[]
+  typeAbonnementServices TypeAbonnementService[]
 
   // Timestamps
   createdAt DateTime @default(now()) @map("created_at")
