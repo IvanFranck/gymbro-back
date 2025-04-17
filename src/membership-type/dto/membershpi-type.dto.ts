@@ -3,7 +3,6 @@ import {
   IsNotEmpty,
   IsOptional,
   IsInt,
-  IsNumber,
   IsBoolean,
   Min,
   MaxLength,
@@ -22,37 +21,6 @@ export class CreateTypeAbonnementDto {
     example: 'Abonnement Premium Annuel',
   })
   nom: string;
-
-  @IsString()
-  @IsOptional()
-  @MaxLength(50)
-  @ApiPropertyOptional({
-    description: "Niveau du type d'abonnement (Basic, Standard, Premium, etc.)",
-    example: 'Premium',
-  })
-  niveau?: string;
-
-  @IsInt()
-  @Min(1)
-  @IsNotEmpty()
-  @Type(() => Number)
-  @ApiProperty({
-    description: "Durée de l'abonnement en jours",
-    example: 365,
-    minimum: 1,
-  })
-  dureeJours: number;
-
-  @IsNumber()
-  @Min(0)
-  @IsNotEmpty()
-  @Type(() => Number)
-  @ApiProperty({
-    description: "Prix de l'abonnement",
-    example: 899.99,
-    minimum: 0,
-  })
-  prix: number;
 
   @IsArray()
   @IsOptional()
@@ -95,43 +63,12 @@ export class UpdateTypeAbonnementDto {
   })
   nom?: string;
 
-  @IsString()
-  @IsOptional()
-  @MaxLength(50)
-  @ApiPropertyOptional({
-    description: "Niveau du type d'abonnement (Basic, Standard, Premium, etc.)",
-    example: 'Premium Plus',
-  })
-  niveau?: string;
-
-  @IsInt()
-  @Min(1)
-  @IsOptional()
-  @Type(() => Number)
-  @ApiPropertyOptional({
-    description: "Durée de l'abonnement en jours",
-    example: 365,
-    minimum: 1,
-  })
-  dureeJours?: number;
-
-  @IsNumber()
-  @Min(0)
-  @IsOptional()
-  @Type(() => Number)
-  @ApiPropertyOptional({
-    description: "Prix de l'abonnement",
-    example: 999.99,
-    minimum: 0,
-  })
-  prix?: number;
-
   @IsArray()
   @IsOptional()
   @ValidateIf(
     (o) =>
       Array.isArray(o.services) &&
-      o.services.every((id) => typeof id === 'number'),
+      o.services.every((id: any) => typeof id === 'number'),
   )
   @ApiPropertyOptional({
     description: "tableau de services associés au type d'abonnement",
@@ -169,24 +106,6 @@ export class TypeAbonnementResponseDto {
     example: 'Abonnement Premium Annuel',
   })
   nom: string;
-
-  @ApiPropertyOptional({
-    description: "Niveau du type d'abonnement",
-    example: 'Premium',
-  })
-  niveau?: string;
-
-  @ApiProperty({
-    description: "Durée de l'abonnement en jours",
-    example: 365,
-  })
-  dureeJours: number;
-
-  @ApiProperty({
-    description: "Prix de l'abonnement",
-    example: 899.99,
-  })
-  prix: number;
 
   @ApiPropertyOptional({
     description: "Description détaillée du type d'abonnement",
@@ -231,42 +150,6 @@ export class FindTypeAbonnementsQueryDto {
     example: true,
   })
   actif?: boolean;
-
-  @IsInt()
-  @IsOptional()
-  @Type(() => Number)
-  @ApiPropertyOptional({
-    description: 'Durée minimale en jours',
-    example: 30,
-  })
-  dureeMin?: number;
-
-  @IsInt()
-  @IsOptional()
-  @Type(() => Number)
-  @ApiPropertyOptional({
-    description: 'Durée maximale en jours',
-    example: 365,
-  })
-  dureeMax?: number;
-
-  @IsNumber()
-  @IsOptional()
-  @Type(() => Number)
-  @ApiPropertyOptional({
-    description: 'Prix minimum',
-    example: 100,
-  })
-  prixMin?: number;
-
-  @IsNumber()
-  @IsOptional()
-  @Type(() => Number)
-  @ApiPropertyOptional({
-    description: 'Prix maximum',
-    example: 1000,
-  })
-  prixMax?: number;
 
   @IsInt()
   @IsOptional()

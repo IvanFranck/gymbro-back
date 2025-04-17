@@ -67,9 +67,6 @@ model Abonnement {
 model TypeAbonnement {
   id          Int     @id @default(autoincrement())
   nom         String
-  niveau      String? // e.g., "Basic", "Premium", "Standard"
-  dureeJours  Int     @map("duree_jours")
-  prix        Float
   description String?
   actif       Boolean @default(true)
 
