@@ -10,10 +10,14 @@ import {
   FindTypeAbonnementsQueryDto,
 } from './dto/membershpi-type.dto';
 import { PrismaService } from 'src/prisma.service';
+import { MembershipTypeServiceService } from 'src/membership-type-service/membership-type-service.service';
 
 @Injectable()
 export class MembershipTypeService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private membershipTypeService: MembershipTypeServiceService,
+  ) {}
 
   /**
    * Crée un nouveau type d'abonnement
@@ -38,9 +42,45 @@ export class MembershipTypeService {
     }
 
     // Créer le type d'abonnement
-    return this.prisma.typeAbonnement.create({
-      data: createTypeAbonnementDto,
-    });
+    let typeAbonnement: TypeAbonnement | undefined;
+    const { services, ...data } = createTypeAbonnementDto;
+    try {
+      typeAbonnement = await this.prisma.typeAbonnement.create({
+        data,
+      });
+
+      // Associate services with the subscription type
+      await this.membershipTypeService.addServiceToAbonnementTypeBulk({
+        typeAbonnementId: typeAbonnement.id,
+        servicesId: services,
+      });
+
+      // Retrieve the updated subscription type with associated services
+      const updatedTypeAbonnement = await this.prisma.typeAbonnement.findUnique(
+        {
+          where: { id: typeAbonnement.id },
+          include: {
+            services: {
+              include: {
+                service: true,
+              },
+            },
+          },
+        },
+      );
+
+      return updatedTypeAbonnement;
+    } catch (error) {
+      if (typeAbonnement) {
+        await this.prisma.typeAbonnement.delete({
+          where: { id: typeAbonnement.id },
+        });
+      }
+      if (error.code instanceof Prisma.PrismaClientKnownRequestError) {
+        throw new Error(error.message);
+      }
+      throw error;
+    }
   }
 
   /**
@@ -111,6 +151,13 @@ export class MembershipTypeService {
       skip,
       take: limit,
       orderBy: { nom: 'asc' },
+      include: {
+        services: {
+          include: {
+            service: true,
+          },
+        },
+      },
     });
 
     return {
@@ -131,6 +178,9 @@ export class MembershipTypeService {
     const typeAbonnement = await this.prisma.typeAbonnement.findUnique({
       where: { id },
       include: {
+        services: {
+          include: { service: true },
+        },
         _count: {
           select: { abonnements: true },
         },
@@ -187,11 +237,20 @@ export class MembershipTypeService {
         );
       }
     }
-
+    const { services, ...data } = updateTypeAbonnementDto;
+    await this.membershipTypeService.addServiceToAbonnementTypeBulk({
+      typeAbonnementId: id,
+      servicesId: services,
+    });
     // Mettre à jour le type d'abonnement
-    return this.prisma.typeAbonnement.update({
+    return await this.prisma.typeAbonnement.update({
       where: { id },
-      data: updateTypeAbonnementDto,
+      data,
+      include: {
+        services: {
+          include: { service: true },
+        },
+      },
     });
   }
 

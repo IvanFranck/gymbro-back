@@ -75,6 +75,7 @@ model TypeAbonnement {
 
   // Relations
   abonnements Abonnement[]
+  services    TypeAbonnementService[]
 
   // Timestamps
   createdAt DateTime @default(now()) @map("created_at")
@@ -129,7 +130,8 @@ model Service {
   actif         Boolean @default(true)
 
   // Relations
-  clientsAcces ClientService[]
+  clientsAcces           ClientService[]
+  TypeAbonnementServices TypeAbonnementService[]
 
   // Timestamps
   createdAt DateTime @default(now()) @map("created_at")
@@ -158,7 +160,22 @@ model ClientService {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
+  @@unique([clientId, serviceId], name: "client_services_unique")
   @@map("client_services")
+}
+
+// Junction table for many-to-many relationship between types of subscriptions and services
+model TypeAbonnementService {
+  id Int @id @default(autoincrement())
+
+  typeAbonne       TypeAbonnement @relation(fields: [typeAbonnementId], references: [id])
+  typeAbonnementId Int            @map("id_type_abonnement")
+
+  service   Service @relation(fields: [serviceId], references: [id])
+  serviceId Int     @map("id_service")
+
+  @@unique([typeAbonnementId, serviceId])
+  @@map("type_abonnement_service")
 }
 
 // For statistics tables, we could add these models later as needed
