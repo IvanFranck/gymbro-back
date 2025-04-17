@@ -44,6 +44,17 @@ export class MembershipService {
       );
     }
 
+    // Vérifier que le tarif d'abonnement existe
+    const tarifAbonnement = await this.prisma.tarifAbonnement.findUnique({
+      where: { id: createAbonnementDto.tarifAbonnementId },
+    });
+
+    if (!tarifAbonnement) {
+      throw new NotFoundException(
+        `Le tarif d'abonnement avec l'id ${createAbonnementDto.tarifAbonnementId} n'existe pas`,
+      );
+    }
+
     // Vérifier que le statut existe
     const statut = await this.prisma.statut.findUnique({
       where: { id: createAbonnementDto.statutId },
@@ -83,6 +94,7 @@ export class MembershipService {
       data: {
         clientId: createAbonnementDto.clientId,
         typeAbonnementId: createAbonnementDto.typeAbonnementId,
+        tarifAbonnmentId: createAbonnementDto.tarifAbonnementId,
         dateDebut,
         dateExpiration,
         montantPaye: createAbonnementDto.montantPaye,
@@ -170,8 +182,13 @@ export class MembershipService {
           select: {
             id: true,
             nom: true,
-            niveau: true,
+          },
+        },
+        tarif: {
+          select: {
+            id: true,
             prix: true,
+            dureeJours: true,
           },
         },
         statut: {
@@ -220,6 +237,7 @@ export class MembershipService {
           },
         },
         typeAbonnement: true,
+        tarif: true,
         statut: true,
         methodePaiement: true,
         servicesAcces: {
@@ -263,6 +281,19 @@ export class MembershipService {
       }
     }
 
+    // Vérifier le tarif d'abonnement s'il est fourni
+    if (updateAbonnementDto.tarifAbonnementId) {
+      const tarifAbonnement = await this.prisma.tarifAbonnement.findUnique({
+        where: { id: updateAbonnementDto.tarifAbonnementId },
+      });
+
+      if (!tarifAbonnement) {
+        throw new NotFoundException(
+          `Le tarif d'abonnement avec l'id ${updateAbonnementDto.tarifAbonnementId} n'existe pas`,
+        );
+      }
+    }
+
     // Vérifier le statut s'il est fourni
     if (updateAbonnementDto.statutId) {
       const statut = await this.prisma.statut.findUnique({
@@ -295,6 +326,12 @@ export class MembershipService {
     if (updateAbonnementDto.typeAbonnementId) {
       updateData.typeAbonnement = {
         connect: { id: updateAbonnementDto.typeAbonnementId },
+      };
+    }
+
+    if (updateAbonnementDto.tarifAbonnementId) {
+      updateData.tarif = {
+        connect: { id: updateAbonnementDto.tarifAbonnementId },
       };
     }
 
@@ -370,8 +407,13 @@ export class MembershipService {
           select: {
             id: true,
             nom: true,
-            niveau: true,
+          },
+        },
+        tarif: {
+          select: {
+            id: true,
             prix: true,
+            dureeJours: true,
           },
         },
         statut: {
@@ -437,18 +479,29 @@ export class MembershipService {
       throw new NotFoundException(`Abonnement avec l'id ${id} non trouvé`);
     }
 
-    // Déterminer le type d'abonnement pour le renouvellement
-    const typeAbonnementId =
-      renewDto.typeAbonnementId || existingAbonnement.typeAbonnementId;
-
     // Vérifier que le type d'abonnement existe
     const typeAbonnement = await this.prisma.typeAbonnement.findUnique({
-      where: { id: typeAbonnementId },
+      where: { id: existingAbonnement.typeAbonnementId },
     });
 
     if (!typeAbonnement) {
       throw new NotFoundException(
-        `Le type d'abonnement avec l'id ${typeAbonnementId} n'existe pas`,
+        `Le type d'abonnement avec l'id ${existingAbonnement.typeAbonnementId} n'existe pas`,
+      );
+    }
+
+    // Déterminer le tarif d'abonnement pour le renouvellement
+    const tarifAbonnementId =
+      renewDto.tarifAbonnementId || existingAbonnement.tarifAbonnmentId;
+
+    // Vérifier que le tarif d'abonnement existe
+    const tarifAbonnement = await this.prisma.tarifAbonnement.findUnique({
+      where: { id: tarifAbonnementId },
+    });
+
+    if (!tarifAbonnement) {
+      throw new NotFoundException(
+        `L'offre d'abonnement avec l'id ${tarifAbonnementId} n'existe pas`,
       );
     }
 
@@ -464,10 +517,10 @@ export class MembershipService {
     }
 
     // Calculer la date d'expiration en fonction du type d'abonnement
-    const dateExpiration = add(dateDebut, { days: typeAbonnement.dureeJours });
+    const dateExpiration = add(dateDebut, { days: tarifAbonnement.dureeJours });
 
     // Déterminer le montant payé
-    const montantPaye = renewDto.montantPaye || typeAbonnement.prix;
+    const montantPaye = renewDto.montantPaye || tarifAbonnement.prix;
 
     // Trouver le statut "Actif"
     const statutActif = await this.prisma.statut.findFirst({
@@ -487,7 +540,8 @@ export class MembershipService {
     return this.prisma.abonnement.create({
       data: {
         clientId: existingAbonnement.clientId,
-        typeAbonnementId,
+        typeAbonnementId: typeAbonnement.id,
+        tarifAbonnmentId: tarifAbonnementId,
         dateDebut,
         dateExpiration,
         montantPaye,
@@ -507,8 +561,13 @@ export class MembershipService {
           select: {
             id: true,
             nom: true,
-            niveau: true,
+          },
+        },
+        tarif: {
+          select: {
+            id: true,
             prix: true,
+            dureeJours: true,
           },
         },
         statut: {
@@ -560,8 +619,13 @@ export class MembershipService {
           select: {
             id: true,
             nom: true,
-            niveau: true,
+          },
+        },
+        tarif: {
+          select: {
+            id: true,
             prix: true,
+            dureeJours: true,
           },
         },
         statut: {

@@ -20,6 +20,11 @@ export class CreateAbonnementDto {
   @ApiProperty({ description: "L'ID du type d'abonnement" })
   typeAbonnementId: number;
 
+  @IsInt()
+  @IsNotEmpty()
+  @ApiProperty({ description: "L'ID du tarif d'abonnement" })
+  tarifAbonnementId: number;
+
   @IsDateString()
   @IsNotEmpty()
   @ApiProperty({ description: "La date de début de l'abonnement" })
@@ -57,6 +62,14 @@ export class UpdateAbonnementDto {
   @IsOptional()
   @ApiPropertyOptional({ description: "L'ID du type d'abonnement" })
   typeAbonnementId?: number;
+
+  @IsInt()
+  @IsOptional()
+  @ApiPropertyOptional({
+    description:
+      "ID du nouveau tarif d'abonnement (par défaut: même tarif que l'abonnement actuel)",
+  })
+  tarifAbonnementId?: number;
 
   @IsDateString()
   @IsOptional()
@@ -230,6 +243,14 @@ export class RenewAbonnementDto {
       "ID du nouveau type d'abonnement (par défaut: même type que l'abonnement actuel)",
   })
   typeAbonnementId?: number;
+
+  @IsInt()
+  @IsOptional()
+  @ApiPropertyOptional({
+    description:
+      "ID du nouveau tarif d'abonnement (par défaut: même tarif que l'abonnement actuel)",
+  })
+  tarifAbonnementId?: number;
 
   @IsNumber()
   @IsPositive()

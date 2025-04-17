@@ -344,7 +344,6 @@ export class CustomerServiceService {
               select: {
                 id: true,
                 nom: true,
-                niveau: true,
               },
             },
           },
