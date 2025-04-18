@@ -4,7 +4,7 @@ import { CreatePricingDto, FindPricingQueryDto } from './dto/pricing.dto';
 import { Prisma } from '@prisma/client';
 
 @Injectable()
-export class PrincingService {
+export class PricingService {
   constructor(private prisma: PrismaService) {}
 
   async create(createPricingDto: CreatePricingDto) {
@@ -78,6 +78,9 @@ export class PrincingService {
 
       return await this.prisma.tarifAbonnement.findMany({
         where,
+        include: {
+          typeAbonnement: true,
+        },
       });
     } catch (error) {
       if (error.code instanceof Prisma.PrismaClientKnownRequestError) {

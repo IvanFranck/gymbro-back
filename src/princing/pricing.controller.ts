@@ -6,13 +6,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CreatePricingDto, FindPricingQueryDto } from './dto/pricing.dto';
-import { PrincingService } from './princing.service';
+import { PricingService } from './pricing.service';
 
-@ApiTags('princing')
+@ApiTags('pricing')
 @ApiBearerAuth()
-@Controller('princing')
-export class PrincingController {
-  constructor(private readonly pricingService: PrincingService) {}
+@Controller('pricing')
+export class PricingController {
+  constructor(private readonly pricingService: PricingService) {}
 
   @Post()
   @ApiOperation({

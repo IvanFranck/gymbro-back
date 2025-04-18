@@ -12,7 +12,7 @@ import { PaymentMethodModule } from './payment-method/payment-method.module';
 import { GymServiceModule } from './gym-service/gym-service.module';
 import { CustomerServiceModule } from './customer-service/customer-service.module';
 import { MembershipTypeServiceModule } from './membership-type-service/membership-type-service.module';
-import { PrincingModule } from './princing/princing.module';
+import { PricingModule } from './princing/pricing.module';
 
 @Module({
   imports: [
@@ -32,7 +32,7 @@ import { PrincingModule } from './princing/princing.module';
     GymServiceModule,
     CustomerServiceModule,
     MembershipTypeServiceModule,
-    PrincingModule,
+    PricingModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
