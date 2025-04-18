@@ -87,16 +87,7 @@ export class MembershipTypeService {
    * Récupère tous les types d'abonnements avec filtres et pagination
    */
   async findAll(query: FindTypeAbonnementsQueryDto) {
-    const {
-      search,
-      actif,
-      dureeMin,
-      dureeMax,
-      prixMin,
-      prixMax,
-      page = 1,
-      limit = 10,
-    } = query;
+    const { search, actif, page = 1, limit = 10 } = query;
     const skip = (page - 1) * limit;
 
     // Construire la clause where basée sur les paramètres de requête
@@ -106,7 +97,6 @@ export class MembershipTypeService {
     if (search) {
       where.OR = [
         { nom: { contains: search, mode: 'insensitive' } },
-        { niveau: { contains: search, mode: 'insensitive' } },
         { description: { contains: search, mode: 'insensitive' } },
       ];
     }
@@ -114,32 +104,6 @@ export class MembershipTypeService {
     // Filtre par statut actif/inactif
     if (actif !== undefined) {
       where.actif = actif;
-    }
-
-    // Filtres de durée
-    if (dureeMin !== undefined || dureeMax !== undefined) {
-      where.dureeJours = {};
-
-      if (dureeMin !== undefined) {
-        where.dureeJours.gte = dureeMin;
-      }
-
-      if (dureeMax !== undefined) {
-        where.dureeJours.lte = dureeMax;
-      }
-    }
-
-    // Filtres de prix
-    if (prixMin !== undefined || prixMax !== undefined) {
-      where.prix = {};
-
-      if (prixMin !== undefined) {
-        where.prix.gte = prixMin;
-      }
-
-      if (prixMax !== undefined) {
-        where.prix.lte = prixMax;
-      }
     }
 
     // Obtenir le nombre total pour la pagination
@@ -358,20 +322,11 @@ export class MembershipTypeService {
       where: { actif: false },
     });
 
-    // Obtenir le prix moyen des types d'abonnements actifs
-    const averagePrice = await this.prisma.typeAbonnement.aggregate({
-      _avg: { prix: true },
-      where: { actif: true },
-    });
-
     // Obtenir les 5 types d'abonnements les plus utilisés
     const mostUsedTypes = await this.prisma.typeAbonnement.findMany({
       select: {
         id: true,
         nom: true,
-        niveau: true,
-        dureeJours: true,
-        prix: true,
         _count: {
           select: { abonnements: true },
         },
@@ -386,13 +341,9 @@ export class MembershipTypeService {
       total: totalCount,
       active: activeCount,
       inactive: inactiveCount,
-      averagePrice: averagePrice._avg.prix || 0,
       mostUsedTypes: mostUsedTypes.map((type) => ({
         id: type.id,
         nom: type.nom,
-        niveau: type.niveau,
-        dureeJours: type.dureeJours,
-        prix: type.prix,
         abonnementsCount: type._count.abonnements,
       })),
     };
