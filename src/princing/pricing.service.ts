@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { CreatePricingDto, FindPricingQueryDto } from './dto/pricing.dto';
-import { Prisma } from '@prisma/client';
+import {
+  CreatePricingDto,
+  FindPricingQueryDto,
+  UpdatePricingDto,
+} from './dto/pricing.dto';
+import { Prisma, TarifAbonnement } from '@prisma/client';
 
 @Injectable()
 export class PricingService {
@@ -29,6 +33,35 @@ export class PricingService {
             },
           },
         },
+      });
+    } catch (error) {
+      if (error.code instanceof Prisma.PrismaClientKnownRequestError) {
+        throw new Error(error.message);
+      }
+      throw error;
+    }
+  }
+
+  async updatePricingItem(
+    id: number,
+    updatePricingDto: UpdatePricingDto,
+  ): Promise<TarifAbonnement> {
+    try {
+      // Vérifier si le tarif d'abonnement existe
+      const existingPricing = await this.prisma.tarifAbonnement.findUnique({
+        where: {
+          id,
+        },
+      });
+      if (!existingPricing) {
+        throw new Error("Tarif d'abonnement introuvable");
+      }
+      // mettre à jour le tarif d'abonnement
+      return await this.prisma.tarifAbonnement.update({
+        where: {
+          id,
+        },
+        data: updatePricingDto,
       });
     } catch (error) {
       if (error.code instanceof Prisma.PrismaClientKnownRequestError) {

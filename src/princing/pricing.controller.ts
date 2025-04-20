@@ -1,11 +1,25 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { CreatePricingDto, FindPricingQueryDto } from './dto/pricing.dto';
+import {
+  CreatePricingDto,
+  FindPricingQueryDto,
+  UpdatePricingDto,
+} from './dto/pricing.dto';
 import { PricingService } from './pricing.service';
 
 @ApiTags('pricing')
@@ -40,5 +54,25 @@ export class PricingController {
   })
   async findAll(@Query() query: FindPricingQueryDto) {
     return await this.pricingService.findAll(query);
+  }
+
+  @Patch(':id')
+  @ApiOperation({
+    summary: "Mettre à jour un tarif d'abonnement",
+  })
+  @ApiParam({
+    name: 'id',
+    type: 'number',
+    description: "ID du tarif d'abonnement",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Le tarif d'abonnement a été mis à jour avec succès",
+  })
+  async updatePricingItem(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updatePricingDto: UpdatePricingDto,
+  ) {
+    return await this.pricingService.updatePricingItem(id, updatePricingDto);
   }
 }

@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  Logger,
 } from '@nestjs/common';
 import { TypeAbonnement, Prisma } from '@prisma/client';
 import {
@@ -14,6 +15,8 @@ import { MembershipTypeServiceService } from 'src/membership-type-service/member
 
 @Injectable()
 export class MembershipTypeService {
+  private readonly logger = new Logger(MembershipTypeService.name);
+
   constructor(
     private prisma: PrismaService,
     private membershipTypeService: MembershipTypeServiceService,
@@ -32,6 +35,7 @@ export class MembershipTypeService {
           equals: createTypeAbonnementDto.nom,
           mode: 'insensitive', // Recherche insensible à la casse
         },
+        actif: true, // Vérifier uniquement les types actifs
       },
     });
 
@@ -76,6 +80,10 @@ export class MembershipTypeService {
           where: { id: typeAbonnement.id },
         });
       }
+      // Log the error for debugging
+      this.logger.error(
+        `Erreur lors de la création du type d'abonnement: ${error.message}`,
+      );
       if (error.code instanceof Prisma.PrismaClientKnownRequestError) {
         throw new Error(error.message);
       }

@@ -29,6 +29,20 @@ export class CreatePricingDto {
   actif?: boolean = true;
 }
 
+export class UpdatePricingDto {
+  @IsString()
+  @ApiProperty({ description: 'Genre' })
+  genre?: string;
+
+  @IsInt()
+  @ApiPropertyOptional({ description: 'Durée en jours' })
+  dureeJours?: number;
+
+  @IsInt()
+  @ApiProperty({ description: 'Prix' })
+  prix?: number;
+}
+
 export class FindPricingQueryDto {
   @IsOptional()
   @IsInt()
