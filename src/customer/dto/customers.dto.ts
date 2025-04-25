@@ -6,6 +6,7 @@ import {
   IsDateString,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 
 export class CreateClientDto {
   @IsString()
@@ -28,10 +29,11 @@ export class CreateClientDto {
   @ApiPropertyOptional({ description: "L'adresse postale du client" })
   adresse?: string;
 
+  @IsOptional()
   @IsInt()
   @IsNotEmpty()
   @ApiProperty({ description: "L'ID du statut du client" })
-  statutId: number;
+  statutId?: number;
 }
 
 export class UpdateClientDto {
@@ -118,11 +120,13 @@ export class FindClientsQueryDto {
 
   @IsOptional()
   @IsInt()
+  @Type(() => Number)
   @ApiPropertyOptional({ description: 'Page number', default: 1 })
   page?: number = 1;
 
   @IsOptional()
   @IsInt()
+  @Type(() => Number)
   @ApiPropertyOptional({ description: 'Items per page', default: 10 })
   limit?: number = 10;
 }

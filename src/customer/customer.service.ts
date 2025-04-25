@@ -27,15 +27,17 @@ export class CustomerService {
       );
     }
 
-    // Verify that the statut exists
-    const statut = await this.prisma.statut.findUnique({
-      where: { id: createClientDto.statutId },
-    });
+    if (createClientDto.statutId) {
+      // Verify that the statut exists
+      const statut = await this.prisma.statut.findUnique({
+        where: { id: createClientDto.statutId },
+      });
 
-    if (!statut) {
-      throw new NotFoundException(
-        `Le statut avec l'id ${createClientDto.statutId} n'existe pas`,
-      );
+      if (!statut) {
+        throw new NotFoundException(
+          `Le statut avec l'id ${createClientDto.statutId} n'existe pas`,
+        );
+      }
     }
 
     // Create the client
