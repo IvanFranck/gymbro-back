@@ -4,6 +4,7 @@ import {
   IsString,
   IsInt,
   IsDateString,
+  IsPhoneNumber,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
@@ -21,6 +22,7 @@ export class CreateClientDto {
 
   @IsString()
   @IsNotEmpty()
+  @IsPhoneNumber('CM')
   @ApiProperty({ description: 'Le numéro de téléphone du client' })
   telephone: string;
 
@@ -32,7 +34,7 @@ export class CreateClientDto {
   @IsOptional()
   @IsInt()
   @IsNotEmpty()
-  @ApiProperty({ description: "L'ID du statut du client" })
+  @ApiPropertyOptional({ description: "L'ID du statut du client" })
   statutId?: number;
 }
 
@@ -49,6 +51,7 @@ export class UpdateClientDto {
 
   @IsString()
   @IsOptional()
+  @IsPhoneNumber('CM')
   @ApiPropertyOptional({ description: 'Le numéro de téléphone du client' })
   telephone?: string;
 
